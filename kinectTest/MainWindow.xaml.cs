@@ -97,7 +97,7 @@ namespace kinectTest
 
         void LoadGestures()
         {
-            VisualGestureBuilderDatabase db = new VisualGestureBuilderDatabase(@"gestures1.gbd");
+            VisualGestureBuilderDatabase db = new VisualGestureBuilderDatabase(@"gestures/gestures1.gbd");
             this.openingGesture = db.AvailableGestures.Where(g => g.Name == "HandsApart").Single();
             this.closingGesture = db.AvailableGestures.Where(g => g.Name == "HandsTogether").Single();
 
