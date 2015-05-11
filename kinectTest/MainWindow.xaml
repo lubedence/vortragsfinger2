@@ -1,0 +1,52 @@
+﻿<Window x:Class="kinectTest.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:k="http://schemas.microsoft.com/kinect/2014"
+        xmlns:local="clr-namespace:kinectTest;assembly="
+        Title="MainWindow" 
+        Height="350" 
+        Width="525"
+        WindowState="Maximized" AllowsTransparency="True" WindowStyle="None">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Dictionary1.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Window.Background>
+        <SolidColorBrush Opacity="0.0" Color="White"/>
+    </Window.Background>
+
+    <k:KinectRegion x:Name="kinectRegion">
+        <Grid>
+            <k:KinectUserViewer Grid.Column="1" Width="150" Height="150" HorizontalAlignment="Center" VerticalAlignment="Top" EngagedUserColor="#FF00D1FF" DefaultUserColor="#FF668B8F"/>
+
+            <local:SketchCanvas  
+              x:Name="myCanvas" Background="#02FFFFFF" Panel.ZIndex="1">
+            </local:SketchCanvas>
+
+            <ContentControl x:Name="navigationRegion" Panel.ZIndex="3">
+                <Grid x:Name="kinectRegionGrid" Margin="100,200,100,200">
+                    <ScrollViewer Grid.Row="0" Name="scrollViewer" 
+                                  HorizontalScrollBarVisibility="Auto"
+                                  VerticalScrollBarVisibility="Disabled" 
+                                  k:KinectRegion.IsScrollInertiaEnabled="true" >                    
+                        
+                        <ItemsControl Grid.Row="0" Name="itemsControl" ItemTemplate="{StaticResource Kinect250x250ItemTemplate}" Button.Click="ButtonClick" Visibility="Hidden">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel VerticalAlignment="Center" Orientation="Vertical" Margin="75,0,75,0" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Grid>
+            </ContentControl>
+
+        </Grid>
+        
+    </k:KinectRegion>
+</Window>
