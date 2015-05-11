@@ -18,7 +18,7 @@ using Microsoft.Kinect.Wpf.Controls;
 using Microsoft.Kinect.Input;
 using System.Diagnostics;
 using System.Windows.Ink;
-using kinectTest.DataSource;
+using Microsoft.Kinect.VisualGestureBuilder;
 
 namespace kinectTest
 {
@@ -27,17 +27,23 @@ namespace kinectTest
     /// </summary>
     public partial class MainWindow : Window
     {
-        private const int LINE_RESUME_THRESHOLD = 100;
-        private const int WINDOW_CHANGE_THRESHOLD = 2000;
+        private const int       LINE_RESUME_THRESHOLD       = 100;
+        private const int       WINDOW_CHANGE_THRESHOLD     = 1000;
+        private const double    GESTURE_CONFIDENCE_MIN      = 0.85;
 
         KinectSensor _sensor;
         MultiSourceFrameReader _reader;
         IList<Body> _bodies;
+        VisualGestureBuilderFrameSource _gestureSource;
+        VisualGestureBuilderFrameReader _gestureReader; 
         Body interactingBody = null;
 
         HandState rHand = HandState.Unknown;
         HandState lHand = HandState.Unknown;
         Stopwatch lastWindowChange = new Stopwatch();
+
+        Gesture openingGesture;
+        Gesture closingGesture;
 
         bool isMenuOpen = false;
 
@@ -53,14 +59,11 @@ namespace kinectTest
             KinectSetup();
             MinimizeToTray.Enable(this);
             lastWindowChange.Start();
-
-            //// Add in display content
-            var sampleDataSource = SampleDataSource.GetGroup("Group-1");
-            this.itemsControl.ItemsSource = sampleDataSource;
         }
 
 
 
+        //TODO: Close sensor method & call
         private bool KinectSetup()
         {
             _sensor = KinectSensor.GetDefault();
@@ -84,13 +87,94 @@ namespace kinectTest
             _sensor.Open();
 
             _reader = _sensor.OpenMultiSourceFrameReader(FrameSourceTypes.Depth | FrameSourceTypes.Body);
-            _reader.MultiSourceFrameArrived += Reader_MultiSourceFrameArrived;
+            _reader.MultiSourceFrameArrived += OnMultiSourceFrameArrived;
+
+            LoadGestures();
 
             return true;
         }
 
 
-        void Reader_MultiSourceFrameArrived(object sender, MultiSourceFrameArrivedEventArgs e)
+        void LoadGestures()
+        {
+            VisualGestureBuilderDatabase db = new VisualGestureBuilderDatabase(@"gestures1.gbd");
+            this.openingGesture = db.AvailableGestures.Where(g => g.Name == "HandsApart").Single();
+            this.closingGesture = db.AvailableGestures.Where(g => g.Name == "HandsTogether").Single();
+
+            this._gestureSource = new VisualGestureBuilderFrameSource(this._sensor, 0);
+
+            this._gestureSource.AddGesture(this.openingGesture);
+            this._gestureSource.AddGesture(this.closingGesture);
+
+            this._gestureSource.TrackingIdLost += OnTrackingIdLost;
+
+            this._gestureReader = this._gestureSource.OpenReader();
+            this._gestureReader.IsPaused = true;
+            this._gestureReader.FrameArrived += OnGestureFrameArrived; 
+        }
+
+        void OnTrackingIdLost(object sender, TrackingIdLostEventArgs e)
+        {
+            this._gestureReader.IsPaused = true;
+        }
+
+        void OnGestureFrameArrived(object sender, VisualGestureBuilderFrameArrivedEventArgs e)
+        {
+            using (var frame = e.FrameReference.AcquireFrame())
+            {
+                if (frame != null)
+                {
+                    var discreteResults = frame.DiscreteGestureResults;
+                    if (discreteResults == null) return;
+
+                    if (discreteResults.ContainsKey(this.closingGesture))
+                    {
+                        var result = discreteResults[this.closingGesture];
+                        if (result.Detected && result.Confidence > GESTURE_CONFIDENCE_MIN && lastWindowChange.ElapsedMilliseconds > WINDOW_CHANGE_THRESHOLD)
+                        {
+
+                            lastWindowChange.Restart();
+
+                            //Closing Gesture started
+                            if (isMenuOpen)
+                            {
+                                hideMenu();
+                            }
+                            else if (WindowState != System.Windows.WindowState.Minimized)
+                            {
+                                hideWindow();
+                            }
+
+                            d_closeGesture.Content = "Close: " + result.Confidence;
+                        }
+                    }
+                    
+                    if (discreteResults.ContainsKey(this.openingGesture))
+                    {
+                        var result = discreteResults[this.openingGesture];
+                        if (result.Detected && result.Confidence > GESTURE_CONFIDENCE_MIN && lastWindowChange.ElapsedMilliseconds > WINDOW_CHANGE_THRESHOLD)
+                        {
+
+                            lastWindowChange.Restart();
+
+                            //Opening Gesture started
+                            if (WindowState == System.Windows.WindowState.Minimized)
+                            {
+                                showWindow();
+                            }
+                            else if(!isMenuOpen){
+                                showMenu();
+                            }
+
+                            d_openGesture.Content = "Open: " + result.Confidence;
+                        }
+                    }
+                }
+            }
+        }
+
+
+        void OnMultiSourceFrameArrived(object sender, MultiSourceFrameArrivedEventArgs e)
         {
             var reference = e.FrameReference.AcquireFrame();
 
@@ -102,12 +186,11 @@ namespace kinectTest
 
                     frame.GetAndRefreshBodyData(_bodies);
 
-                    foreach (var body in _bodies)
-                    {
-                        if (body != null)
+                    var trackedBody = this._bodies.Where(b => b.IsTracked).FirstOrDefault();
+
+
+                    if (trackedBody != null)
                         {
-                            if (body.IsTracked)
-                            {
                                 /*
                                 Joint leftHand = body.Joints[JointType.HandLeft];
                                 Joint rightHand = body.Joints[JointType.HandRight];
@@ -121,22 +204,17 @@ namespace kinectTest
                                 if (width < height) scale = width;
                                 else scale = height;*/
 
-                                interactingBody = body;
-
-                                rHand = body.HandRightState;
-                                lHand = body.HandLeftState;
-
-                                //todo: better gesture
-                                if (rHand == HandState.Closed && lHand == HandState.Closed && lastWindowChange.ElapsedMilliseconds > WINDOW_CHANGE_THRESHOLD)
+                                if (this._gestureReader != null && this._gestureReader.IsPaused)
                                 {
-                                    lastWindowChange.Restart();
-                                    if (WindowState == System.Windows.WindowState.Minimized) showWindow();
-                                    else hideWindow();
+                                    this._gestureSource.TrackingId = trackedBody.TrackingId;
+                                    this._gestureReader.IsPaused = false;
                                 }
-                                
-                            }
+
+                                interactingBody = trackedBody;
+
+                                rHand = trackedBody.HandRightState;
+                                lHand = trackedBody.HandLeftState;
                         }
-                    }
                 }
             }
         }
@@ -176,14 +254,6 @@ namespace kinectTest
                 }
             }
 
-            if (rHand == HandState.Lasso && lHand == HandState.Lasso && lastWindowChange.ElapsedMilliseconds > WINDOW_CHANGE_THRESHOLD)
-            {
-                lastWindowChange.Restart();
-                if (this.itemsControl.IsVisible) hideMenu();
-                else showMenu();
-
-            }
-
         }
 
         private double calcPointDist(Point a, Point b)
@@ -193,14 +263,14 @@ namespace kinectTest
 
         private void showMenu()
         {
-            this.itemsControl.Visibility = Visibility.Visible;
+            this.navigationRegion.Visibility = Visibility.Visible;
             this.myCanvas.IsEnabled = false;
             isMenuOpen = true;
         }
 
         private void hideMenu()
         {
-            this.itemsControl.Visibility = Visibility.Hidden;
+            this.navigationRegion.Visibility = Visibility.Hidden;
             this.myCanvas.IsEnabled = true;
             isMenuOpen = false;
         }
@@ -216,12 +286,5 @@ namespace kinectTest
             WindowState = WindowState.Maximized;
         }
 
-
-        private void ButtonClick(object sender, RoutedEventArgs e)
-        {
-
-
-        }
-       
     }
 }
