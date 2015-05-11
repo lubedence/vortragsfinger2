@@ -20,6 +20,13 @@ namespace kinectTest
     /// </summary>
     public partial class menu : UserControl
     {
+
+        public delegate void ColorChangedEventHandler(Color newColor);
+        public event ColorChangedEventHandler ColorChanged;
+
+        public delegate void ThicknessChangedEventHandler(double newThickness);
+        public event ThicknessChangedEventHandler ThicknessChanged;
+
         public menu()
         {
             InitializeComponent();
@@ -30,11 +37,19 @@ namespace kinectTest
             double val = e.NewValue;
             SolidColorBrush brushColor = (SolidColorBrush)this.Resources["brushColor"];
             brushColor.Color = Color.FromRgb((byte)val, (byte)val, (byte)val);
+
+            if (this.ColorChanged != null)
+            {
+                this.ColorChanged(brushColor.Color);
+            }
         }
 
         private void onLineSliderValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            double val = e.NewValue;
+            if (this.ThicknessChanged != null)
+            {
+                this.ThicknessChanged(e.NewValue);
+            }
         }
     }
 }

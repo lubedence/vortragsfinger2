@@ -31,6 +31,21 @@ namespace kinectTest
         private Point lastDrawnPoint;
         bool isUserDrawing = false;
 
+        private double lineThickness = 10;
+        private Color lineColor = Color.FromRgb(0, 0, 0);
+
+        public double LineThickness
+        {
+            get { return this.lineThickness; }
+            set { this.lineThickness = value; }
+        }
+
+        public Color LineColor
+        {
+            get { return this.lineColor; }
+            set { this.lineColor = value; }
+        }
+
         public SketchCanvas()
         {
             InitializeComponent();
@@ -44,9 +59,9 @@ namespace kinectTest
             }
 
             Line line = new Line();
-            line.Stroke = new SolidColorBrush(Colors.Black);
+            line.Stroke = new SolidColorBrush(lineColor);
 
-            line.StrokeThickness = 10;
+            line.StrokeThickness = lineThickness*1.5;
 
             line.X1 = lastDrawnPoint.X;
             line.Y1 = lastDrawnPoint.Y;
@@ -61,7 +76,7 @@ namespace kinectTest
                 stroke.Add(new Point(lastDrawnPoint.X, lastDrawnPoint.Y));
 
             stroke.Add(nextPoint);
-
+            
             lastDrawnPoint = nextPoint;
         }
 
@@ -75,7 +90,11 @@ namespace kinectTest
 
                 if (stroke.Count > 0)
                 {
-                    this.Strokes.Add(new Stroke(new StylusPointCollection(stroke)));
+                    Stroke _s = new Stroke(new StylusPointCollection(stroke));
+                    _s.DrawingAttributes.Color = lineColor;
+                    _s.DrawingAttributes.Width = lineThickness*0.8;
+                    _s.DrawingAttributes.Height = lineThickness;
+                    this.Strokes.Add(_s);
                     stroke.Clear();
                 }
                 this.Children.Clear();

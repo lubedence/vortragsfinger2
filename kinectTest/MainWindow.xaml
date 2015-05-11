@@ -21,7 +21,7 @@
             </local:SketchCanvas>
 
             <ContentControl x:Name="navigationRegion" Panel.ZIndex="3" Visibility="Hidden">
-                <local:menu Margin="100,200,100,200" />
+                <local:menu x:Name="kinectMenu" Margin="100,200,100,200" />
             </ContentControl>
 
             <Grid  x:Name="debugDataGrid" Panel.ZIndex="4" Margin="20">

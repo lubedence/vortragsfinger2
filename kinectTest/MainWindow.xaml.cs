@@ -27,7 +27,6 @@ namespace kinectTest
     /// </summary>
     public partial class MainWindow : Window
     {
-        private const int       LINE_RESUME_THRESHOLD       = 100;
         private const int       WINDOW_CHANGE_THRESHOLD     = 1000;
         private const double    GESTURE_CONFIDENCE_MIN      = 0.85;
 
@@ -48,6 +47,7 @@ namespace kinectTest
         bool isMenuOpen = false;
 
         private List<Point> stroke = new List<Point>();
+        
 
         public MainWindow()
         {
@@ -55,9 +55,20 @@ namespace kinectTest
             KinectSetup();
             MinimizeToTray.Enable(this);
             lastWindowChange.Start();
+
+            kinectMenu.ColorChanged += new menu.ColorChangedEventHandler(kinectMenu_ColorChanged);
+            kinectMenu.ThicknessChanged += new menu.ThicknessChangedEventHandler(kinectMenu_ThicknessChanged);
         }
 
+        private void kinectMenu_ColorChanged(Color c)
+        {
+            myCanvas.LineColor = c;
+        }
 
+        private void kinectMenu_ThicknessChanged(Double t)
+        {
+            myCanvas.LineThickness = t;
+        }
 
         //TODO: Close sensor method & call
         private bool KinectSetup()
