@@ -49,10 +49,6 @@ namespace kinectTest
 
         private List<Point> stroke = new List<Point>();
 
-        // Keeps track of last time, so we know when we get a new set of pointers. Pointer events fire multiple times per timestamp, based on how many pointers are present.
-        private TimeSpan lastTime;
-        
-
         public MainWindow()
         {
             InitializeComponent();
@@ -183,11 +179,8 @@ namespace kinectTest
                 if (frame != null)
                 {
                     _bodies = new Body[frame.BodyFrameSource.BodyCount];
-
                     frame.GetAndRefreshBodyData(_bodies);
-
                     var trackedBody = this._bodies.Where(b => b.IsTracked).FirstOrDefault();
-
 
                     if (trackedBody != null)
                         {
@@ -215,6 +208,10 @@ namespace kinectTest
                                 rHand = trackedBody.HandRightState;
                                 lHand = trackedBody.HandLeftState;
                         }
+                    else
+                    {
+                        OnTrackingIdLost(null, null);
+                    }
                 }
             }
         }
@@ -254,11 +251,6 @@ namespace kinectTest
                 }
             }
 
-        }
-
-        private double calcPointDist(Point a, Point b)
-        {
-            return Point.Subtract(a, b).LengthSquared;
         }
 
         private void showMenu()

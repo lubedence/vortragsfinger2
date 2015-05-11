@@ -3,19 +3,48 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d" 
              d:DesignHeight="400" d:DesignWidth="600">
+
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="brushColor" Color="Black"/>
+    </UserControl.Resources>
+
     <Grid x:Name="menuGrid"  Background="#FF009B9B">
-        <Slider Margin="10" AllowDrop="True" MinHeight="100" ScrollViewer.VerticalScrollBarVisibility="Disabled" Orientation="Vertical" HorizontalAlignment="Left" MinWidth="30">
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Slider Margin="10" AllowDrop="True" MinHeight="30" ScrollViewer.VerticalScrollBarVisibility="Disabled" MinWidth="100" VerticalAlignment="Center" Grid.ColumnSpan="2" ValueChanged="onColorSliderValueChanged" Maximum="255" SmallChange="1">
             <Slider.LayoutTransform>
                 <TransformGroup>
-                    <ScaleTransform ScaleX="2.1" ScaleY="3"/>
+                    <ScaleTransform ScaleY="3" ScaleX="3"/>
                     <SkewTransform/>
                     <RotateTransform/>
                     <TranslateTransform/>
                 </TransformGroup>
             </Slider.LayoutTransform>
         </Slider>
+
+        <Slider x:Name="sliderBrushThickness" Margin="10" AllowDrop="True" MinHeight="30" ScrollViewer.VerticalScrollBarVisibility="Disabled" MinWidth="100" VerticalAlignment="Center" Grid.ColumnSpan="2" Grid.Row="1" ValueChanged="onLineSliderValueChanged" Minimum="1" Maximum="50" SmallChange="1" Value="20">
+            <Slider.LayoutTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleY="3" ScaleX="3"/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Slider.LayoutTransform>
+        </Slider>
+
+        <Rectangle Fill="{StaticResource brushColor}" Stroke="Black" Width="{Binding Value, ElementName=sliderBrushThickness}" Grid.Column="3" StrokeThickness="0" RadiusX="10" RadiusY="10" Grid.RowSpan="2" HorizontalAlignment="Center" Margin="0,50"/>
 
     </Grid>
 </UserControl>

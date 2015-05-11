@@ -24,5 +24,17 @@ namespace kinectTest
         {
             InitializeComponent();
         }
+
+        private void onColorSliderValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            double val = e.NewValue;
+            SolidColorBrush brushColor = (SolidColorBrush)this.Resources["brushColor"];
+            brushColor.Color = Color.FromRgb((byte)val, (byte)val, (byte)val);
+        }
+
+        private void onLineSliderValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            double val = e.NewValue;
+        }
     }
 }
