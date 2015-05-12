@@ -46,5 +46,39 @@
 
         <Rectangle Fill="{StaticResource brushColor}" Stroke="Black" Width="{Binding Value, ElementName=sliderBrushThickness}" Grid.Column="3" StrokeThickness="0" RadiusX="10" RadiusY="10" Grid.RowSpan="2" HorizontalAlignment="Center" Margin="0,50"/>
 
+        <RadioButton GroupName="drawType" Content="Freehand" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="3" IsChecked="True" Checked="RadioButton_Checked_Freehand">
+            <RadioButton.LayoutTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleX="3" ScaleY="3"/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </RadioButton.LayoutTransform>
+        </RadioButton>
+
+        <RadioButton GroupName="drawType" Content="Straight freehand" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="3" Grid.Column="1" Margin="0,0,0,0" Checked="RadioButton_Checked_FreehandStraight">
+            <RadioButton.LayoutTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleX="3" ScaleY="3"/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </RadioButton.LayoutTransform>
+        </RadioButton>
+
+        <RadioButton GroupName="drawType" Content="Lines" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="3" Margin="0,0,0,0" Grid.Column="2" Checked="RadioButton_Checked_Line">
+            <RadioButton.LayoutTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleX="3" ScaleY="3"/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </RadioButton.LayoutTransform>
+        </RadioButton>
+
+
     </Grid>
 </UserControl>

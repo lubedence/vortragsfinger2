@@ -27,6 +27,9 @@ namespace kinectTest
         public delegate void ThicknessChangedEventHandler(double newThickness);
         public event ThicknessChangedEventHandler ThicknessChanged;
 
+        public delegate void DrawTypeChangedEventHandler(kinectTest.SketchCanvas.DrawType dt);
+        public event DrawTypeChangedEventHandler DrawTypeChanged;
+
         public menu()
         {
             InitializeComponent();
@@ -49,6 +52,30 @@ namespace kinectTest
             if (this.ThicknessChanged != null)
             {
                 this.ThicknessChanged(e.NewValue);
+            }
+        }
+
+        private void RadioButton_Checked_Freehand(object sender, RoutedEventArgs e)
+        {
+            if (this.DrawTypeChanged != null)
+            {
+                this.DrawTypeChanged(kinectTest.SketchCanvas.DrawType.Freehand);
+            }
+        }
+
+        private void RadioButton_Checked_FreehandStraight(object sender, RoutedEventArgs e)
+        {
+            if (this.DrawTypeChanged != null)
+            {
+                this.DrawTypeChanged(kinectTest.SketchCanvas.DrawType.FreehandStraight);
+            }
+        }
+
+        private void RadioButton_Checked_Line(object sender, RoutedEventArgs e)
+        {
+            if (this.DrawTypeChanged != null)
+            {
+                this.DrawTypeChanged(kinectTest.SketchCanvas.DrawType.Line);
             }
         }
     }

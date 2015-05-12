@@ -27,8 +27,8 @@ namespace kinectTest
     /// </summary>
     public partial class MainWindow : Window
     {
-        private const int       WINDOW_CHANGE_THRESHOLD     = 1000;
-        private const double    GESTURE_CONFIDENCE_MIN      = 0.85;
+        private const int       GESTURE_MIN_TIME            = 1000;
+        private const double    GESTURE_MIN_CONFIDENCE      = 0.85;
 
         KinectSensor _sensor;
         MultiSourceFrameReader _reader;
@@ -39,7 +39,7 @@ namespace kinectTest
 
         HandState rHand = HandState.Unknown;
         HandState lHand = HandState.Unknown;
-        Stopwatch lastWindowChange = new Stopwatch();
+        Stopwatch lastGestureTime = new Stopwatch();
 
         Gesture openingGesture;
         Gesture closingGesture;
@@ -54,10 +54,11 @@ namespace kinectTest
             InitializeComponent();
             KinectSetup();
             MinimizeToTray.Enable(this);
-            lastWindowChange.Start();
+            lastGestureTime.Start();
 
             kinectMenu.ColorChanged += new menu.ColorChangedEventHandler(kinectMenu_ColorChanged);
             kinectMenu.ThicknessChanged += new menu.ThicknessChangedEventHandler(kinectMenu_ThicknessChanged);
+            kinectMenu.DrawTypeChanged += new menu.DrawTypeChangedEventHandler(kinectMenu_DrawTypeChanged);
         }
 
         private void kinectMenu_ColorChanged(Color c)
@@ -68,6 +69,11 @@ namespace kinectTest
         private void kinectMenu_ThicknessChanged(Double t)
         {
             myCanvas.LineThickness = t;
+        }
+
+        private void kinectMenu_DrawTypeChanged(kinectTest.SketchCanvas.DrawType dt)
+        {
+            myCanvas.LineDrawType = dt;
         }
 
         //TODO: Close sensor method & call
@@ -137,10 +143,10 @@ namespace kinectTest
                     if (discreteResults.ContainsKey(this.closingGesture))
                     {
                         var result = discreteResults[this.closingGesture];
-                        if (result.Detected && result.Confidence > GESTURE_CONFIDENCE_MIN && lastWindowChange.ElapsedMilliseconds > WINDOW_CHANGE_THRESHOLD)
+                        if (result.Detected && result.Confidence > GESTURE_MIN_CONFIDENCE && lastGestureTime.ElapsedMilliseconds > GESTURE_MIN_TIME)
                         {
 
-                            lastWindowChange.Restart();
+                            lastGestureTime.Restart();
 
                             //Closing Gesture started
                             if (isMenuOpen)
@@ -159,10 +165,10 @@ namespace kinectTest
                     if (discreteResults.ContainsKey(this.openingGesture))
                     {
                         var result = discreteResults[this.openingGesture];
-                        if (result.Detected && result.Confidence > GESTURE_CONFIDENCE_MIN && lastWindowChange.ElapsedMilliseconds > WINDOW_CHANGE_THRESHOLD)
+                        if (result.Detected && result.Confidence > GESTURE_MIN_CONFIDENCE && lastGestureTime.ElapsedMilliseconds > GESTURE_MIN_TIME)
                         {
 
-                            lastWindowChange.Restart();
+                            lastGestureTime.Restart();
 
                             //Opening Gesture started
                             if (WindowState == System.Windows.WindowState.Minimized)
@@ -245,7 +251,7 @@ namespace kinectTest
 
             Point pointRelativeToKinectRegion = new Point(kinectPointerPoint.Position.X * kinectRegion.ActualWidth, kinectPointerPoint.Position.Y * kinectRegion.ActualHeight);
 
-            //NON-MENU INTERACTION
+            //CANVAS INTERACTION
             if (!isMenuOpen)
             {
                 if (rHand != HandState.Lasso && rHand != HandState.Closed)

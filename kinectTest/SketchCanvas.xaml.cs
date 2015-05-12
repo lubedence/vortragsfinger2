@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,14 +23,24 @@ namespace kinectTest
     public partial class SketchCanvas : InkCanvas
     {
 
-        private const int LINE_RESUME_THRESHOLD     = 100;
+        private const int LINE_RESUME_THRESHOLD             = 100;
+        private const int LINE_FREEHAND_STRAIGHT_MIN_DIST   = 12;
+        private const int LINE_FREEHAND_STRAIGHT_ANGLE      = 15;
+
         private const int RUBBER_SIZE               = 30;
+        private const int USER_ACTION_MIN_TIME      = 250;
+        
 
         public enum UserAction {Draw, Move, Cancel};
+        public enum DrawType {Freehand,  FreehandStraight, Line};
 
         private List<Point> stroke = new List<Point>();
         private Point lastDrawnPoint;
         bool isUserDrawing = false;
+        private UserAction lastUserAction = UserAction.Move;
+        private DrawType lineDrawType = DrawType.Freehand;
+
+        Stopwatch lastUserActionTime = new Stopwatch();
 
         private double lineThickness = 10;
         private Color lineColor = Color.FromRgb(0, 0, 0);
@@ -46,12 +57,19 @@ namespace kinectTest
             set { this.lineColor = value; }
         }
 
+        public DrawType LineDrawType
+        {
+            get { return this.lineDrawType; }
+            set { this.lineDrawType = value; }
+        }
+
         public SketchCanvas()
         {
             InitializeComponent();
+            lastUserActionTime.Start();
         }
 
-        private void drawStrokePart(Point nextPoint)
+        private void drawFreehand(Point nextPoint)
         {
             if (!isUserDrawing)
             {
@@ -60,7 +78,6 @@ namespace kinectTest
 
             Line line = new Line();
             line.Stroke = new SolidColorBrush(lineColor);
-
             line.StrokeThickness = lineThickness*1.5;
 
             line.X1 = lastDrawnPoint.X;
@@ -80,6 +97,88 @@ namespace kinectTest
             lastDrawnPoint = nextPoint;
         }
 
+        private void drawFreehandStraight(Point nextPoint)
+        {
+            if (!isUserDrawing)
+            {
+                isUserDrawing = true;
+            }
+
+            Line line = new Line();
+            line.Stroke = new SolidColorBrush(lineColor);
+            line.StrokeThickness = lineThickness * 1.5;
+
+            double deltaX = nextPoint.X - lastDrawnPoint.X;
+            double deltaY = nextPoint.Y - lastDrawnPoint.Y;
+
+            double angle = Math.Atan(deltaY / deltaX)* 180 / Math.PI;
+            double angle4 = Math.Abs(Math.Abs(angle - 180) - 90);
+
+            double dist = Math.Sqrt(Math.Pow(deltaX, 2) + Math.Pow(deltaY,2));
+
+            if (angle4 < LINE_FREEHAND_STRAIGHT_ANGLE && dist > LINE_FREEHAND_STRAIGHT_MIN_DIST) //horizontal line
+            {
+                nextPoint.X = lastDrawnPoint.X;
+            }
+            else if (angle4 > (90 - LINE_FREEHAND_STRAIGHT_ANGLE) && dist > LINE_FREEHAND_STRAIGHT_MIN_DIST)  //vertical line
+            {
+                nextPoint.Y = lastDrawnPoint.Y;
+            }
+            else
+            {
+                return;
+            }
+
+            line.X1 = lastDrawnPoint.X;
+            line.Y1 = lastDrawnPoint.Y;
+            line.X2 = nextPoint.X;
+            line.Y2 = nextPoint.Y;
+            line.StrokeDashCap = PenLineCap.Round;
+            line.StrokeStartLineCap = PenLineCap.Round;
+            line.StrokeEndLineCap = PenLineCap.Round;
+            this.Children.Add(line);
+
+            if (stroke.Count == 0)
+                stroke.Add(new Point(lastDrawnPoint.X, lastDrawnPoint.Y));
+
+            stroke.Add(nextPoint);
+
+            lastDrawnPoint = nextPoint;
+        }
+
+        private void drawLine(Point nextPoint)
+        {
+            if (!isUserDrawing)
+            {
+                isUserDrawing = true;
+            }
+
+            this.Children.Clear();
+            if (stroke.Count > 0)
+            {
+                stroke.RemoveAt(stroke.Count-1);
+            }
+
+            Line line = new Line();
+            line.Stroke = new SolidColorBrush(lineColor);
+            line.StrokeThickness = lineThickness * 1.5;
+
+            line.X1 = lastDrawnPoint.X;
+            line.Y1 = lastDrawnPoint.Y;
+            line.X2 = nextPoint.X;
+            line.Y2 = nextPoint.Y;
+            line.StrokeDashCap = PenLineCap.Round;
+            line.StrokeStartLineCap = PenLineCap.Round;
+            line.StrokeEndLineCap = PenLineCap.Round;
+            this.Children.Add(line);
+
+            if (stroke.Count == 0)
+                stroke.Add(new Point(lastDrawnPoint.X, lastDrawnPoint.Y));
+
+            stroke.Add(nextPoint);
+
+        }
+
         private void evaluateStrokePart(Point nextPoint)
         {
             int distToLastDrawnPoint = (int)Math.Sqrt(Math.Pow((lastDrawnPoint.X - nextPoint.X), 2) + Math.Pow((lastDrawnPoint.Y - nextPoint.Y), 2));
@@ -92,7 +191,7 @@ namespace kinectTest
                 {
                     Stroke _s = new Stroke(new StylusPointCollection(stroke));
                     _s.DrawingAttributes.Color = lineColor;
-                    _s.DrawingAttributes.Width = lineThickness*0.8;
+                    _s.DrawingAttributes.Width = lineThickness;
                     _s.DrawingAttributes.Height = lineThickness;
                     this.Strokes.Add(_s);
                     stroke.Clear();
@@ -101,7 +200,8 @@ namespace kinectTest
 
             }
 
-            if (distToLastDrawnPoint > LINE_RESUME_THRESHOLD)
+           // if (distToLastDrawnPoint > LINE_RESUME_THRESHOLD)
+            if(!isUserDrawing)
                 lastDrawnPoint = new Point(nextPoint.X, nextPoint.Y);
         }
 
@@ -116,12 +216,29 @@ namespace kinectTest
             {
                 case UserAction.Move:
                     evaluateStrokePart(nextPoint);
+                    lastUserActionTime.Restart();
+                    lastUserAction = UserAction.Move;
                     break;
                 case UserAction.Draw:
-                    drawStrokePart(nextPoint);
+                    if (lastUserAction != UserAction.Cancel && lastUserActionTime.ElapsedMilliseconds > USER_ACTION_MIN_TIME)
+                    {
+                        if (lineDrawType == DrawType.Freehand)
+                            drawFreehand(nextPoint);
+                        else if (lineDrawType == DrawType.FreehandStraight)
+                            drawFreehandStraight(nextPoint);
+                        else if (lineDrawType == DrawType.Line)
+                            drawLine(nextPoint);
+                        else return;
+
+                        lastUserAction = UserAction.Draw;
+                    } 
                     break;
                 case UserAction.Cancel:
-                    deleteStrokes(nextPoint);
+                    if (lastUserAction != UserAction.Draw && lastUserActionTime.ElapsedMilliseconds > USER_ACTION_MIN_TIME)
+                    {
+                        deleteStrokes(nextPoint);
+                        lastUserAction = UserAction.Cancel;
+                    }
                     break;
                 default:
                     return;
