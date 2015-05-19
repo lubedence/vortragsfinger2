@@ -19,6 +19,7 @@ using Microsoft.Kinect.Input;
 using System.Diagnostics;
 using System.Windows.Ink;
 using Microsoft.Kinect.VisualGestureBuilder;
+using Microsoft.Kinect.Toolkit.Input;
 
 namespace kinectTest
 {
@@ -90,8 +91,6 @@ namespace kinectTest
 
             App app = ((App)Application.Current);
             app.KinectRegion = kinectRegion;
-
-            // Use the default sensor
             kinectRegion.KinectSensor = _sensor;
 
             this.Loaded += Window_Loaded;

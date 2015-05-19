@@ -79,6 +79,7 @@
     <Compile Include="SketchCanvas.xaml.cs">
       <DependentUpon>SketchCanvas.xaml</DependentUpon>
     </Compile>
+    <Compile Include="util\HsvColor.cs" />
     <Compile Include="util\VirtualMouse.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using kinectTest.util;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -39,7 +40,9 @@ namespace kinectTest
         {
             double val = e.NewValue;
             SolidColorBrush brushColor = (SolidColorBrush)this.Resources["brushColor"];
-            brushColor.Color = Color.FromRgb((byte)val, (byte)val, (byte)val);
+
+            //TODO: add black and white (black if val < 10 - white if val > 370) val between 0-380
+            brushColor.Color = HsvColor.ColorFromHSV((int)val, 1, 1);
 
             if (this.ColorChanged != null)
             {
@@ -78,5 +81,11 @@ namespace kinectTest
                 this.DrawTypeChanged(kinectTest.SketchCanvas.DrawType.Line);
             }
         }
+
+
+
+
+
+
     }
 }

@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:k="http://schemas.microsoft.com/kinect/2014"
              mc:Ignorable="d" 
              d:DesignHeight="400" d:DesignWidth="600">
 
@@ -22,7 +23,7 @@
             <ColumnDefinition/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <Slider Margin="10" AllowDrop="True" MinHeight="30" ScrollViewer.VerticalScrollBarVisibility="Disabled" MinWidth="100" VerticalAlignment="Center" Grid.ColumnSpan="2" ValueChanged="onColorSliderValueChanged" Maximum="255" SmallChange="1">
+        <Slider Margin="10" AllowDrop="True" MinHeight="30" ScrollViewer.VerticalScrollBarVisibility="Disabled" MinWidth="100" VerticalAlignment="Center" Grid.ColumnSpan="2" ValueChanged="onColorSliderValueChanged" Maximum="360" SmallChange="1">
             <Slider.LayoutTransform>
                 <TransformGroup>
                     <ScaleTransform ScaleY="3" ScaleX="3"/>
