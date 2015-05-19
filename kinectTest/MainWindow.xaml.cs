@@ -48,7 +48,6 @@ namespace kinectTest
         bool isMenuOpen = false;
 
         private List<Point> stroke = new List<Point>();
-        
 
         public MainWindow()
         {
@@ -60,16 +59,21 @@ namespace kinectTest
             kinectMenu.ColorChanged += new menu.ColorChangedEventHandler(kinectMenu_ColorChanged);
             kinectMenu.ThicknessChanged += new menu.ThicknessChangedEventHandler(kinectMenu_ThicknessChanged);
             kinectMenu.DrawTypeChanged += new menu.DrawTypeChangedEventHandler(kinectMenu_DrawTypeChanged);
+            
+            kinectMenu_ThicknessChanged(10);
         }
 
         private void kinectMenu_ColorChanged(Color c)
         {
             myCanvas.LineColor = c;
+            myCanvas.DefaultDrawingAttributes.Color = c;
         }
 
         private void kinectMenu_ThicknessChanged(Double t)
         {
             myCanvas.LineThickness = t;
+            myCanvas.DefaultDrawingAttributes.Height = t;
+            myCanvas.DefaultDrawingAttributes.Width = t;
         }
 
         private void kinectMenu_DrawTypeChanged(kinectTest.SketchCanvas.DrawType dt)
@@ -157,7 +161,6 @@ namespace kinectTest
                                 hideWindow();
                             }
 
-                            d_closeGesture.Content = "Close: " + result.Confidence;
                         }
                     }
                     
@@ -177,8 +180,6 @@ namespace kinectTest
                             else if(!isMenuOpen){
                                 showMenu();
                             }
-
-                            d_openGesture.Content = "Open: " + result.Confidence;
                         }
                     }
                 }
@@ -240,7 +241,6 @@ namespace kinectTest
             kinectCoreWindow.PointerMoved += kinectCoreWindow_PointerMoved;
         }
 
-
         private void kinectCoreWindow_PointerMoved(object sender, KinectPointerEventArgs args)
         {
             KinectPointerPoint kinectPointerPoint = args.CurrentPoint;
@@ -248,20 +248,22 @@ namespace kinectTest
             //just one of the >2 hands is the active one
             if (!kinectPointerPoint.Properties.IsEngaged) return;
 
+            
+
             Point pointRelativeToKinectRegion = new Point(kinectPointerPoint.Position.X * kinectRegion.ActualWidth, kinectPointerPoint.Position.Y * kinectRegion.ActualHeight);
 
             //CANVAS INTERACTION
             if (!isMenuOpen)
             {
-                if (rHand != HandState.Lasso && rHand != HandState.Closed)
+                if ((kinectPointerPoint.Properties.HandType == HandType.RIGHT && rHand == HandState.Open) || (kinectPointerPoint.Properties.HandType == HandType.LEFT && lHand == HandState.Open))
                 {
                     myCanvas.updateStrokes(pointRelativeToKinectRegion, SketchCanvas.UserAction.Move);
                 }
-                else if (rHand == HandState.Lasso)
+                else if ((kinectPointerPoint.Properties.HandType == HandType.RIGHT && rHand == HandState.Lasso) || (kinectPointerPoint.Properties.HandType == HandType.LEFT && lHand == HandState.Lasso))
                 {
                     myCanvas.updateStrokes(pointRelativeToKinectRegion, SketchCanvas.UserAction.Draw);
                 }
-                else
+                else if ((kinectPointerPoint.Properties.HandType == HandType.RIGHT && rHand == HandState.Closed) || (kinectPointerPoint.Properties.HandType == HandType.LEFT && lHand == HandState.Closed))
                 {
                     myCanvas.updateStrokes(pointRelativeToKinectRegion, SketchCanvas.UserAction.Cancel);
                 }
@@ -292,6 +294,28 @@ namespace kinectTest
         private void showWindow()
         {
             WindowState = WindowState.Maximized;
+        }
+
+        private void Menu_Button_Click(object sender, RoutedEventArgs e)
+        {
+            if (isMenuOpen)
+            {
+                hideMenu();
+            }
+            else
+            {
+                showMenu();
+            }
+        }
+
+        private void Activate_Mouse_Erase_Mode(object sender, RoutedEventArgs e)
+        {
+            myCanvas.EditingMode = InkCanvasEditingMode.EraseByStroke;
+        }
+
+        private void Activate_Mouse_Draw_Mode(object sender, RoutedEventArgs e)
+        {
+            myCanvas.EditingMode = InkCanvasEditingMode.Ink;
         }
 
     }

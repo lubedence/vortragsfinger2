@@ -6,7 +6,7 @@
         Title="MainWindow" 
         Height="350" 
         Width="525"
-        WindowState="Maximized" AllowsTransparency="True" WindowStyle="None">
+        WindowState="Maximized" AllowsTransparency="True" WindowStyle="None" BorderThickness="10" BorderBrush="Red">
   
     <Window.Background>
         <SolidColorBrush Opacity="0.0" Color="White"/>
@@ -25,9 +25,15 @@
             </ContentControl>
 
             <Grid  x:Name="debugDataGrid" Panel.ZIndex="4" Margin="20">
-                <Label x:Name="d_openGesture" Content="Label" HorizontalAlignment="Right" VerticalAlignment="Top" FontSize="36"/>
-                <Label x:Name="d_closeGesture" Content="Label" HorizontalAlignment="Right" VerticalAlignment="Top" FontSize="36" Margin="0,50,0,0"/>
+                
             </Grid>
+            
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Bottom" Orientation="Horizontal" Panel.ZIndex="10" Background="#7F6BA5D6">
+                <Button Content="Menu" Width="40" Height="20" Margin="5,5,0,10" Click="Menu_Button_Click"/>
+                <CheckBox Content="erase" Height="20" Margin="30,0,5,0" Checked="Activate_Mouse_Erase_Mode" Unchecked="Activate_Mouse_Draw_Mode"/>
+
+            </StackPanel>
+                
 
         </Grid>
         
