@@ -23,7 +23,27 @@
             <ColumnDefinition/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <Slider Margin="10" AllowDrop="True" MinHeight="30" ScrollViewer.VerticalScrollBarVisibility="Disabled" MinWidth="100" VerticalAlignment="Center" Grid.ColumnSpan="2" ValueChanged="onColorSliderValueChanged" Maximum="360" SmallChange="1">
+        <Slider x:Name="sliderBrushColor" Margin="10" AllowDrop="True" MinHeight="30" ScrollViewer.VerticalScrollBarVisibility="Disabled" MinWidth="100" VerticalAlignment="Center" Grid.ColumnSpan="2" ValueChanged="onColorSliderValueChanged" Maximum="7" SmallChange="1" IsSnapToTickEnabled="True" RenderTransformOrigin="0.5,0.5">
+            <Slider.Background>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0" Opacity="0.6">
+                    <LinearGradientBrush.RelativeTransform>
+                        <TransformGroup>
+                            <ScaleTransform CenterY="0.5" CenterX="0.5"/>
+                            <SkewTransform CenterY="0.5" CenterX="0.5"/>
+                            <RotateTransform Angle="90" CenterY="0.5" CenterX="0.5"/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </LinearGradientBrush.RelativeTransform>
+                    <GradientStop Color="White" Offset="0.01"/>
+                    <GradientStop Color="Black" Offset="0.99"/>
+                    <GradientStop Color="Red" Offset="0.84"/>
+                    <GradientStop Color="#FFFFF300" Offset="0.7"/>
+                    <GradientStop Color="#FF3FFF2C" Offset="0.56"/>
+                    <GradientStop Color="#FF5CFFF8" Offset="0.42"/>
+                    <GradientStop Color="#FF140ADE" Offset="0.28"/>
+                    <GradientStop Color="#FFCA00DC" Offset="0.14"/>
+                </LinearGradientBrush>
+            </Slider.Background>
             <Slider.LayoutTransform>
                 <TransformGroup>
                     <ScaleTransform ScaleY="3" ScaleX="3"/>
@@ -35,6 +55,20 @@
         </Slider>
 
         <Slider x:Name="sliderBrushThickness" Margin="10" AllowDrop="True" MinHeight="30" ScrollViewer.VerticalScrollBarVisibility="Disabled" MinWidth="100" VerticalAlignment="Center" Grid.ColumnSpan="2" Grid.Row="1" ValueChanged="onLineSliderValueChanged" Minimum="5" Maximum="70" SmallChange="1" Value="20">
+            <Slider.Background>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0" Opacity="0.6">
+                    <LinearGradientBrush.RelativeTransform>
+                        <TransformGroup>
+                            <ScaleTransform CenterY="0.5" CenterX="0.5"/>
+                            <SkewTransform CenterY="0.5" CenterX="0.5"/>
+                            <RotateTransform Angle="-45" CenterY="0.5" CenterX="0.5"/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </LinearGradientBrush.RelativeTransform>
+                    <GradientStop Color="Black" Offset="0.5"/>
+                    <GradientStop Offset="0.499"/>
+                </LinearGradientBrush>
+            </Slider.Background>
             <Slider.LayoutTransform>
                 <TransformGroup>
                     <ScaleTransform ScaleY="3" ScaleX="3"/>

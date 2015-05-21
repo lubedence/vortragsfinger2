@@ -7,7 +7,7 @@
         Height="350" 
         Width="525"
         WindowState="Maximized" AllowsTransparency="True" WindowStyle="None" BorderThickness="10" BorderBrush="Red">
-  
+
     <Window.Background>
         <SolidColorBrush Opacity="0.0" Color="White"/>
     </Window.Background>
@@ -20,22 +20,25 @@
               x:Name="myCanvas" Background="#02FFFFFF" Panel.ZIndex="1">
             </local:SketchCanvas>
 
-            <ContentControl x:Name="navigationRegion" Panel.ZIndex="3" Visibility="Hidden">
-                <local:menu x:Name="kinectMenu" Margin="100,200,100,200" />
-            </ContentControl>
+            <Grid x:Name="navigationRegion" Panel.ZIndex="3" Visibility="Hidden">
+                <Rectangle Fill="#BFFFFFFF">
+                </Rectangle>
+                <local:menu x:Name="kinectMenu" Margin="100,200,100,200"/>
+
+            </Grid>
 
             <Grid  x:Name="debugDataGrid" Panel.ZIndex="4" Margin="20">
-                
+
             </Grid>
-            
+
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Bottom" Orientation="Horizontal" Panel.ZIndex="10" Background="#7F6BA5D6">
                 <Button Content="Menu" Width="40" Height="20" Margin="5,5,0,10" Click="Menu_Button_Click"/>
                 <CheckBox Content="erase" Height="20" Margin="30,0,5,0" Checked="Activate_Mouse_Erase_Mode" Unchecked="Activate_Mouse_Draw_Mode"/>
 
             </StackPanel>
-                
+
 
         </Grid>
-        
+
     </k:KinectRegion>
 </Window>

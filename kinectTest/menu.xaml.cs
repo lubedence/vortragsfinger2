@@ -38,11 +38,25 @@ namespace kinectTest
 
         private void onColorSliderValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            double val = e.NewValue;
+            int hue = (int)e.NewValue;
             SolidColorBrush brushColor = (SolidColorBrush)this.Resources["brushColor"];
 
+            int sat = 1;
+            int val = 1;
+
+            if (hue == 0)
+            {
+                sat = 0;
+                val = 0;
+            }
+
+            else if (hue == this.sliderBrushColor.Maximum)
+            {
+                sat = 0;
+            }
+
             //TODO: add black and white (black if val < 10 - white if val > 370) val between 0-380
-            brushColor.Color = HsvColor.ColorFromHSV((int)val, 1, 1);
+            brushColor.Color = HsvColor.ColorFromHSV(360 / (this.sliderBrushColor.Maximum - 1) * (hue - 1), sat, val);
 
             if (this.ColorChanged != null)
             {
