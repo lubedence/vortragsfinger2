@@ -24,11 +24,12 @@ namespace kinectTest
     {
 
         private const int LINE_RESUME_THRESHOLD             = 100;
-        private const int LINE_FREEHAND_STRAIGHT_MIN_DIST   = 12;
         private const int LINE_FREEHAND_STRAIGHT_ANGLE      = 15;
 
-        private const int RUBBER_SIZE               = 30;
-        private const int USER_ACTION_MIN_TIME      = 250;
+        private const double SMOOTHING                      = 0.75;
+
+        private const int RUBBER_SIZE                       = 30;
+        private const int USER_ACTION_MIN_TIME              = 250;
         
 
         public enum UserAction {Draw, Move, Cancel};
@@ -36,6 +37,7 @@ namespace kinectTest
 
         private List<Point> stroke = new List<Point>();
         private Point lastDrawnPoint;
+        private Point smoothPoint;
         bool isUserDrawing = false;
         private UserAction lastUserAction = UserAction.Move;
         private DrawType lineDrawType = DrawType.Freehand;
@@ -201,8 +203,11 @@ namespace kinectTest
             }
 
            // if (distToLastDrawnPoint > LINE_RESUME_THRESHOLD)
-            if(!isUserDrawing)
+            if (!isUserDrawing)
+            {
                 lastDrawnPoint = new Point(nextPoint.X, nextPoint.Y);
+                smoothPoint    = new Point(nextPoint.X, nextPoint.Y);
+            }
         }
 
         private void deleteStrokes(Point nextPoint)
@@ -222,10 +227,13 @@ namespace kinectTest
                 case UserAction.Draw:
                     if (lastUserAction != UserAction.Cancel && lastUserActionTime.ElapsedMilliseconds > USER_ACTION_MIN_TIME)
                     {
+
+                        smoothPoint = new Point(smoothPoint.X * SMOOTHING + nextPoint.X * (1 - SMOOTHING), smoothPoint.Y * SMOOTHING + nextPoint.Y * (1 - SMOOTHING));
+
                         if (lineDrawType == DrawType.Freehand)
-                            drawFreehand(nextPoint);
+                            drawFreehand(smoothPoint);
                         else if (lineDrawType == DrawType.FreehandStraight)
-                            drawFreehandStraight(nextPoint);
+                            drawFreehandStraight(smoothPoint);
                         else if (lineDrawType == DrawType.Line)
                             drawLine(nextPoint);
                         else return;

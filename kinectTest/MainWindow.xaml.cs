@@ -248,8 +248,6 @@ namespace kinectTest
             //just one of the >2 hands is the active one
             if (!kinectPointerPoint.Properties.IsEngaged) return;
 
-            
-
             Point pointRelativeToKinectRegion = new Point(kinectPointerPoint.Position.X * kinectRegion.ActualWidth, kinectPointerPoint.Position.Y * kinectRegion.ActualHeight);
 
             //CANVAS INTERACTION
