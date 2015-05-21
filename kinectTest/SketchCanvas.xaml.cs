@@ -24,6 +24,7 @@ namespace kinectTest
     {
 
         private const int LINE_RESUME_THRESHOLD             = 100;
+        private const int LINE_FREEHAND_STRAIGHT_MIN_DIST   = 6;
         private const int LINE_FREEHAND_STRAIGHT_ANGLE      = 15;
 
         private const double SMOOTHING                      = 0.75;
