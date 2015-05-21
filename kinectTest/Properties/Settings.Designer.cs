@@ -22,5 +22,77 @@ namespace kinectTest.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1000")]
+        public int GESTURE_MIN_TIME {
+            get {
+                return ((int)(this["GESTURE_MIN_TIME"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.85")]
+        public double GESTURE_MIN_CONFIDENCE {
+            get {
+                return ((double)(this["GESTURE_MIN_CONFIDENCE"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        public int LINE_RESUME_THRESHOLD {
+            get {
+                return ((int)(this["LINE_RESUME_THRESHOLD"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("6")]
+        public int LINE_FREEHAND_STRAIGHT_MIN_DIST {
+            get {
+                return ((int)(this["LINE_FREEHAND_STRAIGHT_MIN_DIST"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("15")]
+        public int LINE_FREEHAND_STRAIGHT_ANGLE {
+            get {
+                return ((int)(this["LINE_FREEHAND_STRAIGHT_ANGLE"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.75")]
+        public double SMOOTHING {
+            get {
+                return ((double)(this["SMOOTHING"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("30")]
+        public int RUBBER_SIZE {
+            get {
+                return ((int)(this["RUBBER_SIZE"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("250")]
+        public int USER_ACTION_MIN_TIME {
+            get {
+                return ((int)(this["USER_ACTION_MIN_TIME"]));
+            }
+        }
     }
 }

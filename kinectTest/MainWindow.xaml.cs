@@ -28,9 +28,6 @@ namespace kinectTest
     /// </summary>
     public partial class MainWindow : Window
     {
-        private const int       GESTURE_MIN_TIME            = 1000;
-        private const double    GESTURE_MIN_CONFIDENCE      = 0.85;
-
         KinectSensor _sensor;
         MultiSourceFrameReader _reader;
         IList<Body> _bodies;
@@ -146,7 +143,7 @@ namespace kinectTest
                     if (discreteResults.ContainsKey(this.closingGesture))
                     {
                         var result = discreteResults[this.closingGesture];
-                        if (result.Detected && result.Confidence > GESTURE_MIN_CONFIDENCE && lastGestureTime.ElapsedMilliseconds > GESTURE_MIN_TIME)
+                        if (result.Detected && result.Confidence > Properties.Settings.Default.GESTURE_MIN_CONFIDENCE && lastGestureTime.ElapsedMilliseconds > Properties.Settings.Default.GESTURE_MIN_TIME)
                         {
 
                             lastGestureTime.Restart();
@@ -167,7 +164,7 @@ namespace kinectTest
                     if (discreteResults.ContainsKey(this.openingGesture))
                     {
                         var result = discreteResults[this.openingGesture];
-                        if (result.Detected && result.Confidence > GESTURE_MIN_CONFIDENCE && lastGestureTime.ElapsedMilliseconds > GESTURE_MIN_TIME)
+                        if (result.Detected && result.Confidence > Properties.Settings.Default.GESTURE_MIN_CONFIDENCE && lastGestureTime.ElapsedMilliseconds > Properties.Settings.Default.GESTURE_MIN_TIME)
                         {
 
                             lastGestureTime.Restart();

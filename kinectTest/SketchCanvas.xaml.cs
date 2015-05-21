@@ -22,17 +22,7 @@ namespace kinectTest
     /// </summary>
     public partial class SketchCanvas : InkCanvas
     {
-
-        private const int LINE_RESUME_THRESHOLD             = 100;
-        private const int LINE_FREEHAND_STRAIGHT_MIN_DIST   = 6;
-        private const int LINE_FREEHAND_STRAIGHT_ANGLE      = 15;
-
-        private const double SMOOTHING                      = 0.75;
-
-        private const int RUBBER_SIZE                       = 30;
-        private const int USER_ACTION_MIN_TIME              = 250;
-        
-
+   
         public enum UserAction {Draw, Move, Cancel};
         public enum DrawType {Freehand,  FreehandStraight, Line};
 
@@ -119,11 +109,11 @@ namespace kinectTest
 
             double dist = Math.Sqrt(Math.Pow(deltaX, 2) + Math.Pow(deltaY,2));
 
-            if (angle4 < LINE_FREEHAND_STRAIGHT_ANGLE && dist > LINE_FREEHAND_STRAIGHT_MIN_DIST) //horizontal line
+            if (angle4 < Properties.Settings.Default.LINE_FREEHAND_STRAIGHT_ANGLE && dist > Properties.Settings.Default.LINE_FREEHAND_STRAIGHT_MIN_DIST) //horizontal line
             {
                 nextPoint.X = lastDrawnPoint.X;
             }
-            else if (angle4 > (90 - LINE_FREEHAND_STRAIGHT_ANGLE) && dist > LINE_FREEHAND_STRAIGHT_MIN_DIST)  //vertical line
+            else if (angle4 > (90 - Properties.Settings.Default.LINE_FREEHAND_STRAIGHT_ANGLE) && dist > Properties.Settings.Default.LINE_FREEHAND_STRAIGHT_MIN_DIST)  //vertical line
             {
                 nextPoint.Y = lastDrawnPoint.Y;
             }
@@ -186,7 +176,7 @@ namespace kinectTest
         {
             int distToLastDrawnPoint = (int)Math.Sqrt(Math.Pow((lastDrawnPoint.X - nextPoint.X), 2) + Math.Pow((lastDrawnPoint.Y - nextPoint.Y), 2));
 
-            if (isUserDrawing && distToLastDrawnPoint > LINE_RESUME_THRESHOLD)
+            if (isUserDrawing && distToLastDrawnPoint > Properties.Settings.Default.LINE_RESUME_THRESHOLD)
             {
                 isUserDrawing = false;
 
@@ -213,7 +203,7 @@ namespace kinectTest
 
         private void deleteStrokes(Point nextPoint)
         {
-            this.Strokes.Remove(this.Strokes.HitTest(nextPoint, RUBBER_SIZE));
+            this.Strokes.Remove(this.Strokes.HitTest(nextPoint, Properties.Settings.Default.RUBBER_SIZE));
         }
 
         public void updateStrokes(Point nextPoint, UserAction ua)
@@ -226,10 +216,10 @@ namespace kinectTest
                     lastUserAction = UserAction.Move;
                     break;
                 case UserAction.Draw:
-                    if (lastUserAction != UserAction.Cancel && lastUserActionTime.ElapsedMilliseconds > USER_ACTION_MIN_TIME)
+                    if (lastUserAction != UserAction.Cancel && lastUserActionTime.ElapsedMilliseconds > Properties.Settings.Default.USER_ACTION_MIN_TIME)
                     {
 
-                        smoothPoint = new Point(smoothPoint.X * SMOOTHING + nextPoint.X * (1 - SMOOTHING), smoothPoint.Y * SMOOTHING + nextPoint.Y * (1 - SMOOTHING));
+                        smoothPoint = new Point(smoothPoint.X * Properties.Settings.Default.SMOOTHING + nextPoint.X * (1 - Properties.Settings.Default.SMOOTHING), smoothPoint.Y * Properties.Settings.Default.SMOOTHING + nextPoint.Y * (1 - Properties.Settings.Default.SMOOTHING));
 
                         if (lineDrawType == DrawType.Freehand)
                             drawFreehand(smoothPoint);
@@ -243,7 +233,7 @@ namespace kinectTest
                     } 
                     break;
                 case UserAction.Cancel:
-                    if (lastUserAction != UserAction.Draw && lastUserActionTime.ElapsedMilliseconds > USER_ACTION_MIN_TIME)
+                    if (lastUserAction != UserAction.Draw && lastUserActionTime.ElapsedMilliseconds > Properties.Settings.Default.USER_ACTION_MIN_TIME)
                     {
                         deleteStrokes(nextPoint);
                         lastUserAction = UserAction.Cancel;
