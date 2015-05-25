@@ -1,30 +1,5 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="kinectTest.Properties" GeneratedClassName="Settings">
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)">
   <Profiles />
-  <Settings>
-    <Setting Name="GESTURE_MIN_TIME" Type="System.Int32" Scope="Application">
-      <Value Profile="(Default)">1000</Value>
-    </Setting>
-    <Setting Name="GESTURE_MIN_CONFIDENCE" Type="System.Double" Scope="Application">
-      <Value Profile="(Default)">0.85</Value>
-    </Setting>
-    <Setting Name="LINE_RESUME_THRESHOLD" Type="System.Int32" Scope="Application">
-      <Value Profile="(Default)">100</Value>
-    </Setting>
-    <Setting Name="LINE_FREEHAND_STRAIGHT_MIN_DIST" Type="System.Int32" Scope="Application">
-      <Value Profile="(Default)">6</Value>
-    </Setting>
-    <Setting Name="LINE_FREEHAND_STRAIGHT_ANGLE" Type="System.Int32" Scope="Application">
-      <Value Profile="(Default)">15</Value>
-    </Setting>
-    <Setting Name="SMOOTHING" Type="System.Double" Scope="Application">
-      <Value Profile="(Default)">0.75</Value>
-    </Setting>
-    <Setting Name="RUBBER_SIZE" Type="System.Int32" Scope="Application">
-      <Value Profile="(Default)">30</Value>
-    </Setting>
-    <Setting Name="USER_ACTION_MIN_TIME" Type="System.Int32" Scope="Application">
-      <Value Profile="(Default)">250</Value>
-    </Setting>
-  </Settings>
+  <Settings />
 </SettingsFile>

@@ -1,4 +1,4 @@
-﻿using kinectTest.util;
+﻿using votragsfinger2.util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace kinectTest
+namespace votragsfinger2
 {
     /// <summary>
     /// Interaktionslogik für menu.xaml
@@ -28,7 +28,7 @@ namespace kinectTest
         public delegate void ThicknessChangedEventHandler(double newThickness);
         public event ThicknessChangedEventHandler ThicknessChanged;
 
-        public delegate void DrawTypeChangedEventHandler(kinectTest.SketchCanvas.DrawType dt);
+        public delegate void DrawTypeChangedEventHandler(votragsfinger2.SketchCanvas.DrawType dt);
         public event DrawTypeChangedEventHandler DrawTypeChanged;
 
         public menu()
@@ -76,7 +76,7 @@ namespace kinectTest
         {
             if (this.DrawTypeChanged != null)
             {
-                this.DrawTypeChanged(kinectTest.SketchCanvas.DrawType.Freehand);
+                this.DrawTypeChanged(votragsfinger2.SketchCanvas.DrawType.Freehand);
             }
         }
 
@@ -84,7 +84,7 @@ namespace kinectTest
         {
             if (this.DrawTypeChanged != null)
             {
-                this.DrawTypeChanged(kinectTest.SketchCanvas.DrawType.FreehandStraight);
+                this.DrawTypeChanged(votragsfinger2.SketchCanvas.DrawType.FreehandStraight);
             }
         }
 
@@ -92,7 +92,7 @@ namespace kinectTest
         {
             if (this.DrawTypeChanged != null)
             {
-                this.DrawTypeChanged(kinectTest.SketchCanvas.DrawType.Line);
+                this.DrawTypeChanged(votragsfinger2.SketchCanvas.DrawType.Line);
             }
         }
 

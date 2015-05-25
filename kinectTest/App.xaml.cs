@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.Kinect.Wpf.Controls;
 
-namespace kinectTest
+namespace votragsfinger2
 {
     /// <summary>
     /// Interaktionslogik für "App.xaml"

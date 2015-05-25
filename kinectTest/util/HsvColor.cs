@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
 
-namespace kinectTest.util
+namespace votragsfinger2.util
 {
     class HsvColor
     {

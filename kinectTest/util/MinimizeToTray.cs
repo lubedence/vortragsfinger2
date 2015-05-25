@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 
-namespace kinectTest
+namespace votragsfinger2
 {
     /// <summary>
     /// Class implementing support for "minimize to tray" functionality.

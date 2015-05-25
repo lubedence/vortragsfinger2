@@ -9,7 +9,7 @@ using System.Windows.Interop;
 using System.Windows;
 using System.Drawing;
 
-namespace kinectTest
+namespace votragsfinger2
 {
     class VirtualMouse
     {

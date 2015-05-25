@@ -20,8 +20,9 @@ using System.Diagnostics;
 using System.Windows.Ink;
 using Microsoft.Kinect.VisualGestureBuilder;
 using Microsoft.Kinect.Toolkit.Input;
+using votragsfinger2.util;
 
-namespace kinectTest
+namespace votragsfinger2
 {
     /// <summary>
     /// Interaktionslogik für MainWindow.xaml
@@ -49,6 +50,7 @@ namespace kinectTest
         public MainWindow()
         {
             InitializeComponent();
+            UserSettings.Instance.parseIniFile();
             KinectSetup();
             MinimizeToTray.Enable(this);
             lastGestureTime.Start();
@@ -57,7 +59,7 @@ namespace kinectTest
             kinectMenu.ThicknessChanged += new menu.ThicknessChangedEventHandler(kinectMenu_ThicknessChanged);
             kinectMenu.DrawTypeChanged += new menu.DrawTypeChangedEventHandler(kinectMenu_DrawTypeChanged);
             
-            kinectMenu_ThicknessChanged(10);
+            kinectMenu_ThicknessChanged(UserSettings.Instance.LINE_THICKNESS);
         }
 
         private void kinectMenu_ColorChanged(Color c)
@@ -73,7 +75,7 @@ namespace kinectTest
             myCanvas.DefaultDrawingAttributes.Width = t;
         }
 
-        private void kinectMenu_DrawTypeChanged(kinectTest.SketchCanvas.DrawType dt)
+        private void kinectMenu_DrawTypeChanged(votragsfinger2.SketchCanvas.DrawType dt)
         {
             myCanvas.LineDrawType = dt;
         }
@@ -110,7 +112,10 @@ namespace kinectTest
 
         void LoadGestures()
         {
-            VisualGestureBuilderDatabase db = new VisualGestureBuilderDatabase(@"gestures/gestures1.gbd");
+            if (UserSettings.Instance.GESTURE_PATH.CompareTo("null") == 0)
+                return;
+
+            VisualGestureBuilderDatabase db = new VisualGestureBuilderDatabase(@UserSettings.Instance.GESTURE_PATH);
             this.openingGesture = db.AvailableGestures.Where(g => g.Name == "HandsApart").Single();
             this.closingGesture = db.AvailableGestures.Where(g => g.Name == "HandsTogether").Single();
 
@@ -143,7 +148,7 @@ namespace kinectTest
                     if (discreteResults.ContainsKey(this.closingGesture))
                     {
                         var result = discreteResults[this.closingGesture];
-                        if (result.Detected && result.Confidence > Properties.Settings.Default.GESTURE_MIN_CONFIDENCE && lastGestureTime.ElapsedMilliseconds > Properties.Settings.Default.GESTURE_MIN_TIME)
+                        if (result.Detected && result.Confidence > UserSettings.Instance.GESTURE_MIN_CONFIDENCE && lastGestureTime.ElapsedMilliseconds > UserSettings.Instance.GESTURE_MIN_TIME)
                         {
 
                             lastGestureTime.Restart();
@@ -164,7 +169,7 @@ namespace kinectTest
                     if (discreteResults.ContainsKey(this.openingGesture))
                     {
                         var result = discreteResults[this.openingGesture];
-                        if (result.Detected && result.Confidence > Properties.Settings.Default.GESTURE_MIN_CONFIDENCE && lastGestureTime.ElapsedMilliseconds > Properties.Settings.Default.GESTURE_MIN_TIME)
+                        if (result.Detected && result.Confidence > UserSettings.Instance.GESTURE_MIN_CONFIDENCE && lastGestureTime.ElapsedMilliseconds > UserSettings.Instance.GESTURE_MIN_TIME)
                         {
 
                             lastGestureTime.Restart();
@@ -250,15 +255,15 @@ namespace kinectTest
             //CANVAS INTERACTION
             if (!isMenuOpen)
             {
-                if ((kinectPointerPoint.Properties.HandType == HandType.RIGHT && rHand == HandState.Open) || (kinectPointerPoint.Properties.HandType == HandType.LEFT && lHand == HandState.Open))
+                if ((kinectPointerPoint.Properties.HandType == HandType.RIGHT && rHand == UserSettings.Instance.GESTURE_MOVE) || (kinectPointerPoint.Properties.HandType == HandType.LEFT && lHand == UserSettings.Instance.GESTURE_MOVE))
                 {
                     myCanvas.updateStrokes(pointRelativeToKinectRegion, SketchCanvas.UserAction.Move);
                 }
-                else if ((kinectPointerPoint.Properties.HandType == HandType.RIGHT && rHand == HandState.Lasso) || (kinectPointerPoint.Properties.HandType == HandType.LEFT && lHand == HandState.Lasso))
+                else if ((kinectPointerPoint.Properties.HandType == HandType.RIGHT && rHand == UserSettings.Instance.GESTURE_DRAW) || (kinectPointerPoint.Properties.HandType == HandType.LEFT && lHand == UserSettings.Instance.GESTURE_DRAW))
                 {
                     myCanvas.updateStrokes(pointRelativeToKinectRegion, SketchCanvas.UserAction.Draw);
                 }
-                else if ((kinectPointerPoint.Properties.HandType == HandType.RIGHT && rHand == HandState.Closed) || (kinectPointerPoint.Properties.HandType == HandType.LEFT && lHand == HandState.Closed))
+                else if ((kinectPointerPoint.Properties.HandType == HandType.RIGHT && rHand == UserSettings.Instance.GESTURE_RUBBER) || (kinectPointerPoint.Properties.HandType == HandType.LEFT && lHand == UserSettings.Instance.GESTURE_RUBBER))
                 {
                     myCanvas.updateStrokes(pointRelativeToKinectRegion, SketchCanvas.UserAction.Cancel);
                 }
