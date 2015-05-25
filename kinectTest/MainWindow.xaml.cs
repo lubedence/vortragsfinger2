@@ -21,6 +21,7 @@ using System.Windows.Ink;
 using Microsoft.Kinect.VisualGestureBuilder;
 using Microsoft.Kinect.Toolkit.Input;
 using votragsfinger2.util;
+using System.Windows.Threading;
 
 namespace votragsfinger2
 {
@@ -45,6 +46,11 @@ namespace votragsfinger2
 
         bool isMenuOpen = false;
 
+        private DateTime lastMouseMove = DateTime.Now;
+        private bool isMouseHidden = false;
+        DispatcherTimer dispatcherTimer = new DispatcherTimer();
+        Cursor currentCursor;
+
         private List<Point> stroke = new List<Point>();
 
         public MainWindow()
@@ -58,6 +64,11 @@ namespace votragsfinger2
             kinectMenu.ColorChanged += new menu.ColorChangedEventHandler(kinectMenu_ColorChanged);
             kinectMenu.ThicknessChanged += new menu.ThicknessChangedEventHandler(kinectMenu_ThicknessChanged);
             kinectMenu.DrawTypeChanged += new menu.DrawTypeChangedEventHandler(kinectMenu_DrawTypeChanged);
+
+            this.MouseMove += new MouseEventHandler(mainWindow_MouseMove);
+            dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
+            dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
+            dispatcherTimer.Start();
             
             kinectMenu_ThicknessChanged(UserSettings.Instance.LINE_THICKNESS);
         }
@@ -78,6 +89,27 @@ namespace votragsfinger2
         private void kinectMenu_DrawTypeChanged(votragsfinger2.SketchCanvas.DrawType dt)
         {
             myCanvas.LineDrawType = dt;
+        }
+
+
+        private void dispatcherTimer_Tick(object sender, EventArgs e)
+        {
+            if (DateTime.Now - lastMouseMove > TimeSpan.FromSeconds(2) && !isMouseHidden)
+            {
+                currentCursor = Mouse.OverrideCursor;
+                Mouse.OverrideCursor = Cursors.None;
+                isMouseHidden = true;
+            }
+        }
+        private void mainWindow_MouseMove(object sender, MouseEventArgs e)
+        {
+            lastMouseMove = DateTime.Now;
+
+            if (isMouseHidden)
+            {
+                Mouse.OverrideCursor = currentCursor;
+                isMouseHidden = false;
+            }
         }
 
         //TODO: Close sensor method & call
